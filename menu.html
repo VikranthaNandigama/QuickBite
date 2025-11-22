@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite Digital Menu</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles and overrides for better aesthetics */
+        :root {
+            --color-primary: #F97316; /* Orange-600 for primary actions */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Professional light gray */
+        }
+        .item-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Simple spinner animation for loading state */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100">
+
+    <!-- Navigation Bar: QuickBite -->
+    <nav class="sticky top-0 z-10 bg-white shadow-md border-b border-gray-100">
+        <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Title: QuickBite -->
+                <a href="#" class="flex-shrink-0">
+                    <span class="text-2xl font-extrabold text-orange-600">QuickBite</span>
+                </a>
+                <!-- Navigation Links -->
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-900 font-medium hover:text-orange-600 transition duration-150">Menu</a>
+                    <a href="feedback_form.html" class="text-gray-500 font-medium hover:text-orange-600 transition duration-150">Feedback</a>
+                    <button id="cart-button" class="flex items-center text-gray-900 font-medium hover:text-orange-600 transition duration-150">
+                        <!-- Shopping Cart Icon (Lucide icon equivalent via SVG) -->
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Cart (<span id="cart-count">0</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 pt-12 pb-12">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Today's Digital Menu</h1>
+            <p class="text-gray-500 text-xl">Quick, fresh, and ready to order.</p>
+        </header>
+
+        <main class="space-y-12">
+            <!-- BREAKFAST Category -->
+            <section>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-orange-500 pl-3">Breakfast Specials</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="breakfast-menu">
+                    <!-- Items will be injected here by JS -->
+                </div>
+            </section>
+
+            <!-- MAIN COURSES Category -->
+            <section>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-orange-500 pl-3">Main Courses</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="main-courses-menu">
+                    <!-- Items will be injected here by JS -->
+                </div>
+            </section>
+
+            <!-- BEVERAGES Category -->
+            <section>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-orange-500 pl-3">Beverages</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="beverages-menu">
+                    <!-- Items will be injected here by JS -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Alert Modal for Order Confirmation -->
+    <div id="alert-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl p-6 max-w-xs w-full text-center shadow-2xl">
+            <h3 id="alert-title" class="text-xl font-bold text-gray-800 mb-3">Item Added</h3>
+            <p id="alert-message" class="text-gray-600 mb-4">You have added [Item Name] to your cart.</p>
+            <button onclick="closeModal()" class="bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-orange-700 transition">
+                Continue Ordering
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for Firebase access (required setup for Canvas)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Mock Data for Menu Items, including detailed prompts for image generation
+        const menuItems = [
+            { id: 1, name: "Scrambled Eggs & Toast", price: 5.50, category: "breakfast", description: "Fluffy scrambled eggs served with buttered toast.", prompt: "High-quality, professional photograph of a breakfast plate with scrambled eggs and buttered toast, minimalist white background." },
+            { id: 2, name: "Oatmeal with Berries", price: 4.00, category: "breakfast", description: "Warm, slow-cooked oatmeal topped with seasonal berries.", prompt: "Professional close-up of a bowl of hot oatmeal topped with fresh blueberries and strawberries, cinnamon sprinkle, soft lighting." },
+            { id: 3, name: "Chicken Sandwich", price: 7.99, category: "main-courses", description: "Grilled chicken breast, lettuce, tomato, and mayo on whole wheat.", prompt: "Studio quality photo of a stacked grilled chicken sandwich cut in half, showcasing layers, served on a rustic wooden board." },
+            { id: 4, name: "Vegan Buddha Bowl", price: 9.50, category: "main-courses", description: "Quinoa, roasted vegetables, chickpeas, and lemon tahini dressing.", prompt: "Overhead professional shot of a colorful vegan buddha bowl with quinoa, roasted sweet potatoes, kale, and creamy tahini dressing." },
+            { id: 5, name: "Soup of the Day", price: 3.50, category: "main-courses", description: "Ask the chef for today's freshly prepared selection.", prompt: "Warm, comforting bowl of tomato soup with a swirl of cream and fresh herbs, served with a piece of artisan bread." },
+            { id: 6, name: "Freshly Brewed Coffee", price: 2.00, category: "beverages", description: "Medium roast, served hot or iced.", prompt: "High-quality image of a mug of freshly brewed black coffee with steam rising, on a clean, light surface." },
+            { id: 7, name: "Orange Juice", price: 2.50, category: "beverages", description: "100% pure squeezed orange juice.", prompt: "Vibrant glass of fresh orange juice with orange slices on the rim, condensation on the glass, bright lighting." },
+            { id: 8, name: "Breakfast Burrito", price: 6.50, category: "breakfast", description: "Eggs, cheese, potatoes, and choice of sausage or veggies wrapped in a warm tortilla.", prompt: "Close-up shot of a breakfast burrito wrapped in foil, showing the golden brown tortilla texture." },
+            { id: 9, name: "Pasta Primavera", price: 8.75, category: "main-courses", description: "Penne pasta with a light cream sauce and fresh spring vegetables.", prompt: "Professional photo of a serving of penne pasta with bright green and red spring vegetables in a shallow white bowl." },
+        ];
+
+        let cartCount = 0;
+
+        /**
+         * Utility for exponential backoff for API calls.
+         */
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (response.status === 429 || response.status === 503) {
+                            throw new Error(`Rate limit or service unavailable, status: ${response.status}`);
+                        }
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+                    }
+                    return response;
+                } catch (error) {
+                    console.warn(`Fetch attempt ${i + 1} failed: ${error.message}. Retrying...`);
+                    if (i === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        /**
+         * Function to generate image using Imagen API and update the DOM element.
+         * @param {string} prompt - The prompt to generate the image.
+         * @param {number} itemId - The ID of the item to update.
+         */
+        async function generateImage(prompt, itemId) {
+            const apiKey = ""; // API key is provided at runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+            const imageContainer = document.getElementById(`item-image-container-${itemId}`);
+
+            // Ensure we have a container to update
+            if (!imageContainer) return;
+            
+            const payload = {
+                instances: [{
+                    prompt: prompt,
+                    // Add style guidance for a professional look
+                    negativePrompt: "low quality, blur, noise, bad composition, watermark, text, signature",
+                }],
+                parameters: { "sampleCount": 1, "aspectRatio": "16:9" }
+            };
+
+            try {
+                const response = await fetchWithBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const base64Data = result.predictions[0].bytesBase64Encoded;
+                    const imageUrl = `data:image/png;base64,${base64Data}`;
+                    
+                    // Replace the loading container with the actual image
+                    imageContainer.innerHTML = `
+                        <img src="${imageUrl}" 
+                             alt="${prompt}" 
+                             class="w-full h-32 object-cover rounded-lg mb-4 border border-amber-200 shadow-inner"
+                             onerror="this.onerror=null; this.src='https://placehold.co/200x120/cc3300/ffffff?text=Image+Error';">
+                    `;
+                } else {
+                    console.error('Image generation failed for item:', prompt, result);
+                    imageContainer.innerHTML = `<div class="w-full h-32 bg-red-100 rounded-lg mb-4 flex items-center justify-center text-red-500 border border-red-300">Generation failed.</div>`;
+                }
+            } catch (error) {
+                console.error('API call error for image generation:', error);
+                imageContainer.innerHTML = `<div class="w-full h-32 bg-red-100 rounded-lg mb-4 flex items-center justify-center text-red-500 border border-red-300">Network Error.</div>`;
+            }
+        }
+
+        /**
+         * Generates the HTML card for a single menu item, including a loading placeholder.
+         * @param {Object} item - The menu item object.
+         * @returns {string} The HTML string for the item card.
+         */
+        function createItemCard(item) {
+            
+            // Placeholder/Loading container
+            const loadingHtml = `
+                <div id="item-image-container-${item.id}" class="w-full h-32 rounded-lg mb-4 bg-gray-200 flex items-center justify-center border border-gray-300">
+                    <div class="spinner border-4 border-t-4 border-orange-500 border-gray-100 h-8 w-8 rounded-full"></div>
+                </div>
+            `;
+            
+            return `
+                <div class="item-card bg-white p-5 rounded-xl shadow-md border border-gray-200 flex flex-col justify-between overflow-hidden">
+                    
+                    <!-- Image Loading Container -->
+                    ${loadingHtml}
+                         
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">${item.name}</h3>
+                        <p class="text-gray-500 text-sm mb-3">${item.description}</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="text-2xl font-extrabold text-orange-600">$${item.price.toFixed(2)}</span>
+                        <button onclick="orderItem(${item.id}, '${item.name}')" 
+                                class="order-button bg-orange-600 text-white text-sm py-2 px-4 rounded-lg font-semibold hover:bg-orange-700 transition duration-200 transform active:scale-95 shadow-md">
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Renders all menu items into their respective category sections and triggers image generation.
+         */
+        function renderMenu() {
+            const sections = {
+                'breakfast': document.getElementById('breakfast-menu'),
+                'main-courses': document.getElementById('main-courses-menu'),
+                'beverages': document.getElementById('beverages-menu')
+            };
+
+            const itemsToRender = menuItems.map(item => {
+                // Render the card HTML first
+                const cardHtml = createItemCard(item);
+                // Then trigger image generation asynchronously
+                generateImage(item.prompt, item.id);
+                return cardHtml;
+            }).join('');
+
+
+            for (const key in sections) {
+                if (sections[key]) {
+                    const itemsHtml = menuItems
+                        .filter(item => item.category === key)
+                        .map(item => {
+                            generateImage(item.prompt, item.id); // Re-trigger for correct section placement
+                            return createItemCard(item);
+                        })
+                        .join('');
+                    sections[key].innerHTML = itemsHtml;
+                }
+            }
+        }
+        
+        /**
+         * Handles the "Order Now" click event.
+         * @param {number} itemId - The ID of the item being ordered.
+         * @param {string} itemName - The name of the item.
+         */
+        function orderItem(itemId, itemName) {
+            // 1. Update Cart Count
+            cartCount++;
+            document.getElementById('cart-count').textContent = cartCount;
+
+            // 2. Show Confirmation Modal
+            const alertModal = document.getElementById('alert-modal');
+            const alertTitle = document.getElementById('alert-title');
+            const alertMessage = document.getElementById('alert-message');
+
+            alertTitle.textContent = "Item Added to Cart";
+            alertMessage.textContent = `You have added ${itemName} to your cart.`;
+            alertModal.classList.remove('hidden');
+
+            console.log(`Item ID ${itemId} (${itemName}) ordered. Cart count: ${cartCount}`);
+        }
+
+        /**
+         * Closes the confirmation modal.
+         */
+        function closeModal() {
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+        // Initialize the page on load
+        document.addEventListener('DOMContentLoaded', renderMenu);
+    </script>
+</body>
+</html>

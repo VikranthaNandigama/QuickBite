@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Bite - Professional Redesign</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="titt.png">
+<style>
+    /* VARIABLES */
+    :root {
+        --primary-red: #e63946; /* Your brand red */
+        --secondary-yellow: #f6c23e; /* Your brand yellow */
+        --dark-blue: #1d3557; /* New: Dark color for text/background contrast */
+        --light-text: #f1faee; /* New: Near-white for text on dark backgrounds */
+        --white: #ffffff;
+    }
+
+    /* GLOBAL RESET & FONT CHANGE */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif; /* Default body font */
+    }
+
+    body {
+        background: var(--white);
+        color: var(--dark-blue);
+    }
+
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        padding: 20px 80px; /* Increased padding for more space */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /* Added a subtle shadow to lift the navbar */
+        box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05); 
+    }
+
+    .logo {
+        font-size: 36px; /* Slightly reduced size */
+        color: var(--primary-red);
+        font-family: 'Poppins', sans-serif; /* Poppins for logo */
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 30px; /* Increased gap */
+    }
+
+    .nav-buttons a {
+        text-decoration: none;
+        background: none; /* Removed background for a cleaner look */
+        padding: 10px 15px;
+        border-radius: 5px;
+        color: var(--dark-blue);
+        font-size: 18px;
+        font-weight: 600;
+        /* Added transition for professional hover effect */
+        transition: all 0.3s ease; 
+    }
+
+    .nav-buttons a:hover {
+        color: var(--primary-red); /* Highlight on hover */
+    }
+
+    /* HERO SECTION */
+    .hero {
+        width: 100%;
+        height: 650px; /* Slightly increased height */
+        background: url('img.jpg') no-repeat center/cover;
+        position: relative;
+        /* Replaced solid borders with padding/margin for cleaner look */
+        padding: 10px 0; 
+    }
+
+    .overlay {
+        width: 100%;
+        height: 100%;
+        /* Adjusted color to secondary-yellow and increased opacity for contrast */
+        background: rgba(246, 194, 62, 0.45); 
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Center content vertically */
+        padding: 0 80px; /* Increased padding */
+    }
+
+    .left-text h1 {
+        color: white; /* Changed text color for better contrast against the yellow overlay */
+        font-family: 'Poppins', sans-serif;
+        font-size: 72px; /* Increased size for impact */
+        line-height: 1.1;
+        margin-bottom: 50px;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+    }
+
+    .order-btn {
+        background: rgb(36, 68, 4); /* Used brand color for primary action button */
+        color: var(--white);
+        padding: 18px 60px; /* Increased padding */
+        font-size: 24px;
+        font-weight: 700;
+        border-radius: 50px; /* More modern, fully rounded button */
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 8px 15px rgba(255, 0, 21, 0);
+        transition: all 0.3s ease;
+    }
+    
+    .order-btn:hover {
+        background: var(--dark-blue); /* Darker hover color for a premium feel */
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(5, 54, 123, 0);
+    }
+
+    /* RIGHT BLUR CARDS */
+    .right-blur {
+        display: grid;
+        grid-template-columns: repeat(2, 200px);
+        gap: 30px; /* Adjusted gap */
+        /* Center the grid within the flex container */
+        place-items: center; 
+    }
+
+    .blur-box {
+        width: 200px;
+        height: 200px; 
+        /* Increased blur and decreased opacity for a sophisticated 'frosted glass' look */
+        background: rgba(255, 255, 255, 0.15); 
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        border: 2px solid rgba(246, 194, 62, 0.6); /* Lighter, more subtle border */
+        transition: transform 0.3s ease;
+    }
+    
+    .blur-box:hover {
+        transform: scale(1.05); /* Slight lift on hover */
+    }
+
+    .blur-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.9; /* Keeps blur visible while showcasing image */
+    }
+/* LOGIN SECTION STYLES */
+    /* LOGIN SECTION STYLES (MODIFIED) */
+    .login-section {
+        /* Increased padding for a substantial, full-width section feel */
+        padding: 100px 40px; 
+        background: rgb(254, 205, 98); /* Changed background to the dark-blue brand color */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Ensure it takes up significant vertical space */
+        min-height: 550px; 
+        color: var(--light-text); /* Light text on dark background for contrast */
+    }
+
+    .login-container {
+        /* Increased max-width significantly */
+        background: var(--white);
+        padding: 60px; /* More internal padding */
+        border-radius: 15px; /* Slightly rounder edges */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* Stronger shadow to lift it */
+        width: 100%;
+        max-width: 550px; /* Made it noticeably wider */
+        text-align: center;
+    }
+
+    .login-container h2 {
+        font-family: 'Poppins', sans-serif;
+        color: var(--dark-blue); /* Heading remains dark blue */
+        font-size: 36px; /* Larger heading */
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .login-container p {
+        color: #444;
+        margin-bottom: 35px; /* More space below the subtitle */
+        font-size: 18px; /* Larger paragraph text */
+    }
+
+    #traditional-login-form input {
+        width: 100%;
+        padding: 18px; /* Larger input fields */
+        margin-bottom: 20px;
+        border: 2px solid #ddd; /* Thicker border */
+        border-radius: 10px;
+        font-size: 17px;
+        transition: border-color 0.3s;
+    }
+
+    #traditional-login-form input:focus {
+        border-color: var(--primary-red);
+        outline: none;
+    }
+
+    .login-btn-primary {
+        width: 100%;
+        background: var(--primary-red);
+        color: var(--white);
+        padding: 18px; /* Larger button padding */
+        border: none;
+        border-radius: 10px;
+        font-size: 20px; /* Bigger button text */
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-bottom: 25px;
+    }
+
+    .login-btn-primary:hover {
+        background: #c0303b; /* Darker red on hover */
+    }
+
+    .or-separator {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 40px 0; /* More vertical space */
+    }
+
+    .or-separator .line {
+        flex-grow: 1;
+        height: 2px; /* Thicker separator line */
+        background: #eee;
+    }
+
+    .or-separator .text {
+        padding: 0 20px;
+        font-size: 16px;
+        color: #999;
+        font-weight: 600;
+    }
+    
+    /* NEW: Banner style to highlight the section title on the dark background */
+    .section-title-banner {
+        width: 100%;
+        padding: 20px;
+        background: var(--secondary-yellow);
+        color: var(--dark-blue);
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">QUICK BITE</div>
+
+    
+</div>
+
+<div class="hero">
+    <div class="overlay">
+
+        <div class="left-text">
+            <h1>Your Meal,<br>
+            Your Choice,<br>
+            One Click Away</h1>
+
+            <a href="#" class="order-btn">Order Now</a>
+        </div>
+
+        <div class="right-blur">
+            <div class="blur-box">
+                <img src="img5.jpg" alt="Dish image 1"> 
+            </div>
+            <div class="blur-box">
+                <img src="img6.jpg" alt="Dish image 2">
+            </div>
+            <div class="blur-box">
+                <img src="img7.jpg" alt="Dish image 3">
+            </div>
+            <div class="blur-box">
+                <img src="img8.jpg" alt="Dish image 4">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="login-section">
+    <div class="login-container">
+        <h2>Sign In to Quick Bite</h2>
+        <p>Access your personalized dashboard, view order history, and save your favorites instantly.</p>
+
+        <form id="traditional-login-form">
+            <input type="email" placeholder="Email Address" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit" class="login-btn-primary">SECURE LOGIN</button>
+        </form>
+
+        <div class="or-separator">
+            <span class="line"></span>
+            <span class="text">OR SIGN IN WITH</span>
+            <span class="line"></span>
+        </div>
+
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID" 
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+
+    </div>
+</div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+    /**
+ * Handles the JWT credential response from the Google Sign-In button.
+ * This function is referenced in the HTML's data-callback attribute.
+ * @param {Object} response - The object containing the encoded JWT credential.
+ */
+function handleCredentialResponse(response) {
+    console.log("Encoded JWT ID token: " + response.credential);
+
+    // 1. Decode the JWT to get user data
+    const userObject = jwt_decode(response.credential);
+    console.log("User Data:", userObject);
+
+    // 2. You would typically send this JWT to your backend server for verification
+    // and to set a secure session or cookie.
+    // fetch('/api/login/google', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({ credential: response.credential }),
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     if (data.success) {
+    //         // Redirect the user or update the UI
+    //         alert("Welcome, " + userObject.name + "!");
+    //         window.location.href = "/orders.html"; 
+    //     }
+    // });
+    
+    // For front-end demonstration:
+    alert("Google Sign-In Successful!\nWelcome, " + userObject.name + " (" + userObject.email + ")");
+    // Hide the login form and show a profile link, or redirect
+}
+
+/**
+ * Utility function to decode the JWT (JSON Web Token)
+ * This requires including the 'jwt-decode' library or writing a custom parser.
+ * For production, always verify the JWT on the server-side.
+ */
+function jwt_decode(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        console.error("Error decoding JWT:", e);
+        return {};
+    }
+}
+
+// Simple handler for the traditional form (MODIFIED FOR REDIRECTION)
+document.getElementById('traditional-login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Check if the form is valid (browser handles 'required' fields)
+    if (this.checkValidity()) {
+        // In a real app, this would send credentials to a server first.
+        
+        // **MODIFICATION: Redirects to 'page.html'**
+        window.location.href = "page.html";
+    }
+});
+</script>
+
+
+</body>
+</html>
